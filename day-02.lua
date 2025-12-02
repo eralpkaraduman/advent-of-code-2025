@@ -1,3 +1,5 @@
+require "utils"
+
 local testInput = {
     "11-22",                 --- has two invalid IDs, 11 and 22.
     "95-115",                --- has one invalid ID, 99.
@@ -74,3 +76,6 @@ local function processInput(input)
 end
 assert(processInput({ "10-12", "22-44" }) == (11 + 22 + 33 + 44))
 assert(processInput(testInput) == 1227775554)
+
+local result = processInput(ParseSeparatedByComma("day-02-input.txt"))
+print(result)

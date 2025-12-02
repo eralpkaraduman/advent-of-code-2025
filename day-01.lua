@@ -112,7 +112,7 @@ end
 assert(applyRotations(testInput) == 3)
 assert(select(2, applyRotations(testInput)) == 6)
 
-local realInput = ParseTextInput("day-01-input.txt")
+local realInput = ParseLinesIntoTable("day-01-input.txt")
 local phase1, phase2 = applyRotations(realInput)
 print(phase1, phase2)
 assert(phase1 == 1180)
