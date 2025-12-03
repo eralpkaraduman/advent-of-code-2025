@@ -1,3 +1,5 @@
+require "utils"
+
 ---@type table<string>
 local testInput = {
     "987654321111111",
@@ -10,23 +12,22 @@ local testInput = {
 ---@return string
 local function largestNumbersInBank(bank)
     local a = 1
-    local b = #bank
-    local v = #bank
-    for u = 1, #bank do
-        v = #bank - u + 1
-        if u < b then
-            local numU = math.tointeger(bank:sub(u, u))
-            local numA = math.tointeger(bank:sub(a, a))
-            if numU > numA then
-                a = u
-            end
+    local aNum = math.tointeger(bank:sub(a, a))
+    for i = 2, #bank - 1 do
+        local iNum = math.tointeger(bank:sub(i, i))
+        if iNum > aNum then
+            a = i
+            aNum = iNum
         end
-        if v > a then
-            local numV = math.tointeger(bank:sub(v, v))
-            local numB = math.tointeger(bank:sub(b, b))
-            if numV > numB then
-                b = v
-            end
+    end
+
+    local b = #bank
+    local bNum = math.tointeger(bank:sub(b, b))
+    for i = #bank - 1, a + 1, -1 do
+        local iNum = math.tointeger(bank:sub(i, i))
+        if iNum > bNum then
+            b = i
+            bNum = iNum
         end
     end
     return bank:sub(a, a) .. bank:sub(b, b)
@@ -50,3 +51,5 @@ local function processInput(input)
     return sum
 end
 assert(processInput(testInput) == 357)
+
+print(processInput(ParseLinesIntoTable("day-03-input.txt")))
