@@ -1,3 +1,4 @@
+---@type string[]
 local testInput = {
     "..@@.@@@@.",
     "@@@.@.@.@@",
@@ -20,11 +21,11 @@ local adjacentLocationOffsets = {
 
 ---@param x integer
 ---@param y integer
----@param input table<string>
----@return string
+---@param input string[]
+---@return string, string
 local function getAdjacentPositions(x, y, input)
     ---@type string
-    local positions = ""
+    local adjacents = ""
     local maxY = #input
     for _, offset in ipairs(adjacentLocationOffsets) do
         local newx = x + offset[1]
@@ -32,13 +33,58 @@ local function getAdjacentPositions(x, y, input)
         if newx >= 1 and newy >= 1 then
             ---@type string
             local row = input[newy]
-            local maxX = #row
-            if newx <= maxX and newy <= maxY then
-                positions = positions .. row:sub(newx, newx)
+            if row then
+                local maxX = #row
+                if newx <= maxX and newy <= maxY then
+                    local adjacent = row:sub(newx, newx)
+                    adjacents = adjacents .. row:sub(newx, newx)
+                end
             end
         end
     end
-    return positions
+
+    local origin = input[y]:sub(x, x)
+    return adjacents, origin
 end
-print(getAdjacentPositions(1, 1, testInput))
-print(getAdjacentPositions(10, 10, testInput))
+assert(select(2, getAdjacentPositions(1, 1, testInput)) == ".")
+assert(select(2, getAdjacentPositions(3, 1, testInput)) == "@")
+assert(select(2, getAdjacentPositions(10, 10, testInput)) == ".")
+assert(select(2, getAdjacentPositions(5, 5, testInput)) == "@")
+
+assert(getAdjacentPositions(1, 1, testInput) == ".@@")
+assert(getAdjacentPositions(3, 1, testInput) == ".@@@.")
+assert(getAdjacentPositions(10, 10, testInput) == "@.@")
+assert(getAdjacentPositions(5, 5, testInput) == "@@@@@@@@")
+
+---@param x integer
+---@param y integer
+---@param input string[]
+---@return boolean
+local function validateAdjacentPositions(x, y, input)
+    local adjacents, origin = getAdjacentPositions(x, y, input)
+    if origin ~= "@" then
+        return false
+    end
+    local _, rollCount = adjacents:gsub("@", "")
+    return rollCount < 4
+end
+assert(validateAdjacentPositions(1, 1, testInput) == false)
+assert(validateAdjacentPositions(3, 1, testInput) == true)
+assert(validateAdjacentPositions(10, 10, testInput) == false)
+assert(validateAdjacentPositions(9, 10, testInput) == true)
+assert(validateAdjacentPositions(5, 5, testInput) == false)
+
+---@param input string[]
+---@return nil
+local function processInput(input)
+    local numValid = 0
+    for y, row in ipairs(input) do
+        for x = 1, #row do
+            if validateAdjacentPositions(x, y, input) then
+                numValid = numValid + 1
+            end
+        end
+    end
+    return numValid
+end
+assert(processInput(testInput) == 13)
