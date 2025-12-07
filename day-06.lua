@@ -1,3 +1,5 @@
+require "utils"
+
 ---@type string[]
 local testInput = {
     "123 328  51 64 ",
@@ -24,8 +26,16 @@ local function parseInput(input)
             end
         else
             for icol, col in ipairs(columns) do
-                local sub = row:sub(col[2], col[3])
-                local num = math.tointeger(sub)
+                local num = nil
+
+                if icol == #columns then
+                    local sub = row:sub(col[2], #row)
+                    num = math.tointeger(sub)
+                else
+                    local sub = row:sub(col[2], col[3])
+                    num = math.tointeger(sub)
+                end
+
                 -- local sign = col[1]
                 -- print("col " .. icol .. "  ")
                 --
@@ -85,4 +95,9 @@ local function parseInput(input)
     return total
 end
 
-print(parseInput(testInput))
+assert(parseInput(testInput) == 4277556)
+local realInput = ParseLinesIntoTable("day-06-input.txt")
+
+-- print(#(realInput[#realInput]))
+-- print(#(realInput[1]))
+print(parseInput(realInput))
