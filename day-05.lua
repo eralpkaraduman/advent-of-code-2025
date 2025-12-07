@@ -18,21 +18,22 @@ local testInput = {
 
 ---@param input string[]
 local function processInput(input)
-    ---@type boolean[]
-    local ingredientStatus = {}
+    ---@type integer[]
+    local ingredients = {}
 
     ---@type boolean
-    local statusIndexComplete = false
+    local ingredientsComplete = false
 
     ---@type integer
-    local freshIngredientCount = 1
+    local freshIngredientCount = 0
 
-    for _, entry in ipairs(input) do
+    for i = #input, 1, -1 do
+        local entry = input[i]
         if #entry == 0 then
-            statusIndexComplete = true
+            ingredientsComplete = true
             goto continue
         end
-        if not statusIndexComplete then
+        if ingredientsComplete then
             local aStr, bStr = entry:match("(%d+)-(%d+)")
             local a = math.tointeger(aStr)
             local b = math.tointeger(bStr)
@@ -40,17 +41,18 @@ local function processInput(input)
                 error("failed to parse range")
             end
 
-            for i = #ingredientStatus + 1, b do
-                ingredientStatus[i] = i < a
+            for j, ingredient in ipairs(ingredients) do
+                if ingredient >= a and ingredient <= b then
+                    table.remove(ingredients, j)
+                    freshIngredientCount = freshIngredientCount + 1
+                end
             end
         else
             local ingredientId = math.tointeger(entry)
             if not ingredientId then
                 error("failed to parse int")
             end
-            if ingredientStatus[ingredientId] then
-                freshIngredientCount = freshIngredientCount + 1
-            end
+            table.insert(ingredients, ingredientId)
         end
         ::continue::
     end
